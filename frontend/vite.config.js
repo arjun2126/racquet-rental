@@ -9,6 +9,14 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist'  // Add this
+    outDir: 'dist'
+  },
+  server: {
+    port: process.env.PORT || 5173,
+    host: '0.0.0.0'
+  },
+  preview: {
+    port: process.env.PORT || 5173,
+    host: '0.0.0.0'
   }
 });
