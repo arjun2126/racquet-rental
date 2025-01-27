@@ -13,7 +13,7 @@ const RentalHistory = () => {
 
   const fetchRentalHistory = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/rentals/history');
+      const response = await rentalApi.getRentalHistory();
       if (response.ok) {
         const data = await response.json();
         setRentals(data);
@@ -54,7 +54,7 @@ const RentalHistory = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Rental History</h2>
         <button
-          onClick={() => window.location.href = 'http://127.0.0.1:5000/api/rentals/export'}
+          onClick={() => rentalApi.exportRentals()}
           className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
         >
           <FileDown className="h-5 w-5" />
