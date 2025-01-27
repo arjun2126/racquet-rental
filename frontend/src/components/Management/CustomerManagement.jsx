@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Phone, Mail, History, Trash2, Edit2 } from 'lucide-react';
+import { customerApi } from '../../services/api';
 
 export default function CustomerManagement() {
   const [customers, setCustomers] = useState([]);
