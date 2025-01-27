@@ -35,7 +35,7 @@ const RentalForm = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/customers');
+      const response = await customerApi.getAllCustomers();
       if (response.ok) {
         const data = await response.json();
         setCustomers(data);
@@ -47,7 +47,7 @@ const RentalForm = () => {
 
   const fetchAvailableRacquets = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/racquets');
+      const response = await racquetApi.getAllRacquets();
       if (response.ok) {
         const data = await response.json();
         setAvailableRacquets(data.filter(r => r.is_available));
@@ -72,14 +72,7 @@ const RentalForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/rentals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          racquet_ids: selectedRacquets.map(r => r.id)
-        })
-      });
+      const response = await rentalApi.createRental({...formData, racquet_ids: selectedRacquets.map(r => r.id)});
 
       if (!response.ok) {
         const error = await response.json();
@@ -279,11 +272,7 @@ const RentalForm = () => {
               onSubmit={async (e) => {
                 e.preventDefault();
                 try {
-                  const response = await fetch('http://127.0.0.1:5000/api/customers', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCustomerData),
-                  });
+                  const response = await customerApi.createCustomer(newCustomerData);
 
                   if (response.ok) {
                     const customer = await response.json();
