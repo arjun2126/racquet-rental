@@ -7,4 +7,5 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 18.0.0
-    staticPublishPath: ./dist
+      - key: VITE_API_URL
+        value: "https://racquet-rental.onrender.com"
