@@ -7,5 +7,7 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 18.0.0
+      - key: PORT
+        value: 3000
       - key: VITE_API_URL
         value: "https://racquet-rental.onrender.com"
