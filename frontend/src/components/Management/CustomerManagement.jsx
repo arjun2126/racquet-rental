@@ -15,16 +15,13 @@ export default function CustomerManagement() {
 
   const fetchCustomers = async (searchTerm = '') => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/customers?search=${encodeURIComponent(searchTerm)}`);
-      if (!response.ok) throw new Error('Failed to fetch customers');
-      const data = await response.json();
+      const data = await customerApi.getAllCustomers(searchTerm);
       setCustomers(data);
     } catch (error) {
       console.error('Error:', error);
     }
   };
   
-  // Update useEffect to include searchTerm dependency
   useEffect(() => {
     fetchCustomers(searchTerm);
   }, [searchTerm]);
@@ -41,51 +38,29 @@ export default function CustomerManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const url = editingCustomer 
-      ? `http://127.0.0.1:5000/api/customers/${editingCustomer.id}`
-      : 'http://127.0.0.1:5000/api/customers';
-    
-    const method = editingCustomer ? 'PUT' : 'POST';
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        await fetchCustomers();
-        setShowForm(false);
-        setEditingCustomer(null);
-        setFormData({ name: '', phone: '', email: '' });
+      if (editingCustomer) {
+        await customerApi.updateCustomer(editingCustomer.id, formData);
       } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to save customer');
+        await customerApi.createCustomer(formData);
       }
+      await fetchCustomers();
+      setShowForm(false);
+      setEditingCustomer(null);
+      setFormData({ name: '', phone: '', email: '' });
     } catch (error) {
+      alert(error.message || 'Failed to save customer');
       console.error('Error saving customer:', error);
     }
   };
 
   const handleDelete = async (customerId) => {
     if (!window.confirm('Are you sure you want to delete this customer?')) return;
-
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/customers/${customerId}`, {
-        method: 'DELETE'
-      });
-      
-      if (response.ok) {
-        fetchCustomers();
-      } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to delete customer');
-      }
+      await customerApi.deleteCustomer(customerId);
+      fetchCustomers();
     } catch (error) {
+      alert(error.message || 'Failed to delete customer');
       console.error('Error deleting customer:', error);
     }
   };
