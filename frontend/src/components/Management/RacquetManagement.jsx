@@ -23,7 +23,7 @@ export default function RacquetManagement() {
 
   const fetchRacquets = async (searchTerm = '') => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/racquets?search=${encodeURIComponent(searchTerm)}`);
+      const response = await racquetApi.getAllRacquets(searchTerm);
       if (!response.ok) throw new Error('Failed to fetch racquets');
       const data = await response.json();
       setRacquets(data);
@@ -34,7 +34,7 @@ export default function RacquetManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/racquets/stats');
+      const response = await racquetApi.getRacquetStats();
       if (!response.ok) throw new Error('Failed to fetch stats');
       const data = await response.json();
       setStats(data);
@@ -50,15 +50,7 @@ export default function RacquetManagement() {
 
   const generateBarcode = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/racquets/barcode/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          manufacturer_code: formData.manufacturer_code
-        })
-      });
+      const response = await racquetApi.generateBarcode(formData.manufacturer_code);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -83,9 +75,7 @@ export default function RacquetManagement() {
     if (!window.confirm('Are you sure you want to delete this racquet?')) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/racquets/${racquetId}`, {
-        method: 'DELETE'
-      });
+      const response = await racquetApi.deleteRacquet(racquetId);
       
       if (response.ok) {
         fetchRacquets();
@@ -115,8 +105,8 @@ export default function RacquetManagement() {
     e.preventDefault();
     
     const url = editingRacquet 
-      ? `http://127.0.0.1:5000/api/racquets/${editingRacquet.id}`
-      : 'http://127.0.0.1:5000/api/racquets';
+  ? racquetApi.updateRacquet(editingRacquet.id, formData)
+  : racquetApi.createRacquet(formData);
     
     const method = editingRacquet ? 'PUT' : 'POST';
 
