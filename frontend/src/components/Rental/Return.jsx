@@ -11,13 +11,7 @@ const ReturnPage = () => {
 
   const verifyReturn = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/rentals/verify-return', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ barcode })
-      });
+      const response = await rentalApi.verifyReturn(barcode);
       const data = await response.json();
       if (!response.ok) {
         setError(data.error);
@@ -39,16 +33,10 @@ const ReturnPage = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/rentals/${rentalDetails.id}/complete-return`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          new_condition: newCondition,
-          employee_name: employeeName
-        })
-      });
+      const response = await rentalApi.completeReturn(rentalDetails.id, {
+  new_condition: newCondition,
+  employee_name: employeeName
+});
       const data = await response.json();
       if (!response.ok) {
         setError(data.error);
