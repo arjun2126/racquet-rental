@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { rentalApi } from '../../services/api';
 
 export default function ActiveRentals() {
  const [rentals, setRentals] = useState([]);
