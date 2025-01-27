@@ -20,7 +20,7 @@ export default function ActiveRentals() {
 
  const fetchRentals = async () => {
    try {
-     const response = await fetch('http://127.0.0.1:5000/api/rentals');
+     const response = await rentalApi.getActiveRentals();
      if (response.ok) {
        const data = await response.json();
        setRentals(data);
