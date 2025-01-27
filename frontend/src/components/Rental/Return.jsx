@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Barcode, Check, X } from 'lucide-react';
+import { rentalApi } from '../../services/api';
 
 const ReturnPage = () => {
   const [barcode, setBarcode] = useState('');
