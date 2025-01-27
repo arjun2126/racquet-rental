@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, X } from 'lucide-react';
-import { customerApi, racquetApi, rentalApi } from '../services/api';
+import { customerApi, racquetApi, rentalApi } from '../../services/api';
 
 const RentalForm = () => {
   const getCurrentDate = () => {
