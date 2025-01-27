@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileDown, Search } from 'lucide-react';
+import { rentalApi } from '../../services/api';
 
 const RentalHistory = () => {
   const [rentals, setRentals] = useState([]);
