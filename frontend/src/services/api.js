@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://racquet-rental.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 // Customer related API calls
 export const customerApi = {
