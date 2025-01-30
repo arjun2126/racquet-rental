@@ -1,4 +1,3 @@
-# app/routes/rental_routes.py
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, send_file
 from app.models import Rental, RentalRacquet, Racquet
