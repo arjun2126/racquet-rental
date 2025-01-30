@@ -1,7 +1,6 @@
 from datetime import datetime
 import csv
 from io import StringIO, BytesIO
-from ..models.rental import Rental
 
 class ExportService:
     HEADERS = [
@@ -33,8 +32,8 @@ class ExportService:
                         rental.checkout_date.strftime('%Y-%m-%d') if rental.checkout_date else '-',
                         rental.expected_return_date.strftime('%Y-%m-%d') if rental.expected_return_date else '-',
                         rental.return_date.strftime('%Y-%m-%d') if rental.return_date else '-',
-                        rental.employee_name or '-',  # Changed to match your model
-                        rental.returned_by or '-',    # Changed to match your model
+                        rental.employee_name or '-',
+                        rental.returned_by or '-',
                         cls.get_rental_status(rental),
                         f"${rental.rental_fee:.2f}" if rental.rental_fee else '$0.00'
                     ])
