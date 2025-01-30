@@ -22,10 +22,10 @@ const RentalHistory = () => {
     }
   };
 
-  const handleExport = () => {
-    rentalApi.exportRentals();
-  };
-
+const handleExport = () => {
+  rentalApi.exportRentals('history'); // Pass the type parameter
+};
+  
   const getStatusColor = (status) => {
     switch (status) {
       case 'Returned': return 'bg-green-100 text-green-800';
