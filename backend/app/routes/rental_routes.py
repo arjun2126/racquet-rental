@@ -150,18 +150,28 @@ def get_rental_history():
         return jsonify(rental_history)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+        
 @rental_bp.route('/export', methods=['GET'])
 def export_rentals():
     try:
-        active_rentals = Rental.query.filter_by(return_date=None).all()
-        csv_buffer = ExportService.export_rentals_to_csv(active_rentals)
+        # Get the type from query parameter, default to 'active'
+        export_type = request.args.get('type', 'active')
         
+        if export_type == 'history':
+            # Get all rentals (including returned ones)
+            rentals = Rental.query.all()
+            filename = f'rental_history_{datetime.now().strftime("%Y%m%d")}.csv'
+        else:
+            # Get only active rentals
+            rentals = Rental.query.filter_by(return_date=None).all()
+            filename = f'active_rentals_{datetime.now().strftime("%Y%m%d")}.csv'
+
+        csv_buffer = ExportService.export_rentals_to_csv(rentals)
         return send_file(
             csv_buffer,
             mimetype='text/csv',
             as_attachment=True,
-            download_name=f'active_rentals_{datetime.now().strftime("%Y%m%d")}.csv'
+            download_name=filename
         )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
