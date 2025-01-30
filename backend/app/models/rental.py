@@ -1,27 +1,60 @@
-# app/models/rental.py
 from datetime import datetime
-from ..extensions import db
+import csv
+from io import StringIO, BytesIO
+from flask import send_file
 
-class Rental(db.Model):
-    __tablename__ = 'rental'
-    id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    customer = db.relationship('Customer', back_populates='rentals')
-    checkout_date = db.Column(db.DateTime, default=datetime.utcnow)
-    return_date = db.Column(db.DateTime)
-    returned_by = db.Column(db.String(100))
-    employee_name = db.Column(db.String(100))
-    expected_return_date = db.Column(db.DateTime)
-    rental_fee = db.Column(db.Float)
-    rental_racquets = db.relationship('RentalRacquet', backref='rental', lazy=True)
+class ExportService:
+    HEADERS = [
+        'Rental ID', 'Customer Name', 'Customer Phone', 'Customer Email',
+        'Racquet Serial Number', 'Racquet Brand', 'Racquet Model',
+        'Checkout Date', 'Expected Return Date', 'Return Date',
+        'Employee Out', 'Employee Return', 'Status', 'Rental Fee'
+    ]
 
-    @property
-    def is_overdue(self):
-        return (not self.return_date and
-                datetime.utcnow() > self.expected_return_date) if self.expected_return_date else False
+    @classmethod
+    def export_rentals_to_csv(cls, rentals):
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(cls.HEADERS)
+        
+        try:
+            for rental in rentals:
+                customer = rental.customer
+                for rental_racquet in rental.rental_racquets:
+                    racquet = rental_racquet.racquet
+                    writer.writerow([
+                        rental.id,
+                        customer.name,
+                        customer.phone,
+                        customer.email,
+                        racquet.serial_number,
+                        racquet.brand,
+                        racquet.model,
+                        rental.checkout_date.strftime('%Y-%m-%d') if rental.checkout_date else '-',
+                        rental.expected_return_date.strftime('%Y-%m-%d') if rental.expected_return_date else '-',
+                        rental.return_date.strftime('%Y-%m-%d') if rental.return_date else '-',
+                        rental.employee_name or '-',
+                        rental.returned_by or '-',
+                        cls.get_rental_status(rental),
+                        f"${rental.rental_fee:.2f}" if rental.rental_fee else '$0.00'
+                    ])
+        except Exception as e:
+            print(f"Error in export_rentals_to_csv: {str(e)}")
+            raise
 
-class RentalRacquet(db.Model):
-    __tablename__ = 'rental_racquet'
-    id = db.Column(db.Integer, primary_key=True)
-    rental_id = db.Column(db.Integer, db.ForeignKey('rental.id'), nullable=False)
-    racquet_id = db.Column(db.Integer, db.ForeignKey('racquet.id'), nullable=False)
+        return BytesIO(output.getvalue().encode('utf-8'))
+
+    @classmethod
+    def get_rental_status(cls, rental):
+        if rental.return_date:
+            return 'Returned'
+        elif rental.is_overdue:
+            return 'Overdue'
+        else:
+            return 'Active'
+
+    @classmethod
+    def generate_filename(cls, type='active'):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        prefix = 'rental_history' if type == 'history' else 'active_rentals'
+        return f'{prefix}_{timestamp}.csv'
