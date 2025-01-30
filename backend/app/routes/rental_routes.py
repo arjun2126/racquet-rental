@@ -6,7 +6,7 @@ from app import db
 from app.extensions import db
 from app.models.customer import Customer
 from app.models.rental import Rental, RentalRacquet
-from ..services.export_service import ExportService  # Assuming you put ExportService in a services folder
+from app.services import ExportService
 
 rental_bp = Blueprint('rental', __name__)
 
