@@ -1,4 +1,3 @@
-from ..extensions import db
 from .customer import Customer
 from .racquet import Racquet
 from .rental import Rental, RentalRacquet
