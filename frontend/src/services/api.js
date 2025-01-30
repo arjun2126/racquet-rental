@@ -124,7 +124,11 @@ export const rentalApi = {
     return response.json();
   },
 
-  exportRentals: () => {
-    window.location.href = `${API_URL}/api/rentals/export`;
+  exportRentals: (type = 'active') => {
+    window.location.href = `${API_URL}/api/rentals/export?type=${type}`;
+  },
+
+  exportRentalHistory: () => {
+    window.location.href = `${API_URL}/api/rentals/export?type=history`;
   }
 };
